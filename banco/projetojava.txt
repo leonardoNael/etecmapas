@@ -1,0 +1,22 @@
+etapas projeto:
+-gravar no banco de dados (MySQL)
+-RN: não grava se já estiver no banco
+-exceção
+
+24/05/2019
+
+public class Usuario {
+	private string login;
+	private string senha;
+}
+
+public interface UsuarioDAO... {
+	public Usuario findByLoginAndSenha(string login, string senha);
+}
+
+public class UsuarioSB... {
+	public void auth /*(?)*/ (Usuario) {
+		Usuario user = dao.findByLoginAndSenha(u.getLogin(), u.getSenha();
+		if (user == null){ exc } continua exec
+	}
+}
