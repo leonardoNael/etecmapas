@@ -1,20 +1,127 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:b="http://bootsfaces.net/ui"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:h="http://java.sun.com/jsf/html">
-    <h:head>
-        <title>BootsFaces Basic Page</title>
-    </h:head>
-    <h:body>
-        <b:container>
-            <b:row>
-                <b:column>
-                    <h1>Hello, world!</h1>
-                </b:column>
-            </b:row>
-        </b:container>
-    </h:body>
+	xmlns:b="http://bootsfaces.net/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title>BootsFaces Basic Page</title>
+</h:head>
+<h:body>
+	<p:growl id="msgs" showDetail="false" life="7000" sticky="false"
+		autoUpdate="true" />
+
+	<p:ajaxStatus onstart="PF('dgLoader').show()"
+		onsuccess="PF('dgLoader').hide()"></p:ajaxStatus>
+	<p:dialog widgetVar="dgLoader" modal="true" resizable="false"
+		showHeader="false">
+		<p:graphicImage name="ajax-loader.gif" library="resources" />
+	</p:dialog>
+
+
+
+	<h:form id="cadastroEtec">
+		<p:dialog header="Cadastrar ETEC" widgetVar="insertdlg" modal="true"
+			height="100%" resizable="false">
+
+			<h:panelGrid columns="1" cellpadding="5">
+				<b:inputText label="Nome" labelStyle="width:80px;">
+					<f:facet name="prepend">
+					</f:facet>
+				</b:inputText>
+				<b:inputText label="Codigo" labelStyle="width:80px;">
+					<f:facet name="append">
+					</f:facet>
+				</b:inputText>
+				<b:inputText label="CEP" labelStyle="width:80px;">
+					<f:facet name="prepend">
+					</f:facet>
+				</b:inputText>
+				<b:inputText label="Cidade" labelStyle="width:80px;">
+					<f:facet name="prepend">
+					</f:facet>
+				</b:inputText>
+				<b:inputText label="Bairro" labelStyle="width:80px;">
+					<f:facet name="prepend">
+					</f:facet>
+				</b:inputText>
+				<b:inputText label="Endereco" labelStyle="width:80px;">
+					<f:facet name="prepend">
+					</f:facet>
+				</b:inputText>
+			</h:panelGrid>
+
+			<f:facet name="footer">
+				<p:commandButton value="Confirmar"
+					actionListener="#{etecMB.onSave()}" />
+				<p:commandButton value="Cancelar" onclick="PF('insertdlg').hide();" />
+			</f:facet>
+		</p:dialog>
+	</h:form>
+
+	<p:commandButton value="Novo" icon="ui-icon-plus"
+		style="margin-right:20px;" onclick="PF('insertdlg').show();" />
+
+
+	<script type="text/javascript">
+		function limpa_formulÃ¡rio_cep() {
+			//Limpa valores do formulÃ¡rio de cep.
+			document.getElementById('logradouro').value = ("");
+			document.getElementById('bairro').value = ("");
+			document.getElementById('cidade').value = ("");
+		}
+
+		function meu_callback(conteudo) {
+			if (!("erro" in conteudo)) {
+				//Atualiza os campos com os valores.
+				document.getElementById('cadastroEtec:logradouro').value = (conteudo.logradouro);
+				document.getElementById('cadastroEtec:bairro').value = (conteudo.bairro);
+				document.getElementById('cadastroEtec:cidade').value = (conteudo.localidade);
+			} //end if.
+			else {
+				//CEP nÃ£o Encontrado.
+				limpa_formulÃ¡rio_cep();
+				alert("CEP nÃ£o encontrado.");
+			}
+		}
+
+		function pesquisacep(valor) {
+
+			//Nova variÃ¡vel "cep" somente com dÃ­gitos.
+			var cep = valor.replace(/\D/g, '');
+
+			//Verifica se campo cep possui valor informado.
+			if (cep != "") {
+
+				//ExpressÃ£o regular para validar o CEP.
+				var validacep = /^[0-9]{8}$/;
+
+				//Valida o formato do CEP.
+				if (validacep.test(cep)) {
+
+					//Cria um elemento javascript.
+					var script = document.createElement('script');
+
+					//Sincroniza com o callback.
+					script.src = 'https://viacep.com.br/ws/' + cep
+							+ '/json/?callback=meu_callback';
+
+					//Insere script no documento e carrega o conteÃºdo.
+					document.body.appendChild(script);
+
+				} //end if.
+				else {
+					//cep Ã© invÃ¡lido.
+					limpa_formulÃ¡rio_cep();
+					alert("Formato de CEP invÃ¡lido.");
+				}
+			} //end if.
+			else {
+				//cep sem valor, limpa formulÃ¡rio.
+				limpa_formulÃ¡rio_cep();
+			}
+		};
+	</script>
+</h:body>
 </html>
-          
